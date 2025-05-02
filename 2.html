@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJTIMES1.1 - Veda2 - Localhost</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #e74c3c;
+            --light-bg: #f9f9f9;
+            --dark-bg: #1e1e1e;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: #ddd;
+        }
+
+        body.dark-mode .sidebar,
+        body.dark-mode .section,
+        body.dark-mode .tab-content {
+            background-color: #2a2a2a;
+            border-color: #444;
+        }
+
+        body.dark-mode .section-header {
+            background-color: #333;
+            border-color: #444;
+        }
+
+        body.dark-mode .content-area {
+            background-color: #252525;
+        }
+
+        body.dark-mode table {
+            border-color: #444;
+        }
+
+        body.dark-mode th, 
+        body.dark-mode td {
+            border-color: #444;
+            background-color: #333;
+        }
+
+        .sidebar {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .app-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-section {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-color);
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background-color: var(--warning-color);
+            color: white;
+            border-radius: 10px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.7rem;
+        }
+
+        .search-box-container {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.5rem 0.5rem 0.5rem 2rem;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .file-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-path {
+            font-family: monospace;
+            background-color: rgba(255,255,255,0.05);
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-path:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .main-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .breadcrumbs {
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--warning-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-area {
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--accent-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background-color: var(--light-bg);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        body.dark-mode .section-header {
+            background-color: #333;
+        }
+
+        .section-body {
+            padding: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: #f1f1f1;
+            color: var(--text-color);
+        }
+
+        body.dark-mode .btn-secondary {
+            background-color: #444;
+            color: #ddd;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-mode .btn-secondary:hover {
+            background-color: #555;
+        }
+
+        .sync-manager {
+            margin-top: 1.5rem;
+        }
+
+        .sync-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .sync-progress {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .progress-bar {
+            background-color: #444;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        body.dark-mode .progress-meta {
+            color: #999;
+        }
+
+        .sync-details {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .sync-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 80px;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sync-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-icon {
+            font-weight: bold;
+        }
+
+        .completed .status-icon {
+            color: var(--success-color);
+        }
+
+        .in-progress .status-icon {
+            color: var(--accent-color);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--light-bg);
+            font-weight: 600;
+        }
+
+        body.dark-mode th {
+            background-color: #333;
+        }
+
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        body.dark-mode tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .results-toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .view-options, .time-filters {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        select, input[type="date"] {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        body.dark-mode select,
+        body.dark-mode input[type="date"] {
+            background-color: #333;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            background-color: var(--light-bg);
+            padding: 0.75rem 1.5rem;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #666;
+            border-top: 1px solid var(--border-color);
+        }
+
+        body.dark-mode footer {
+            background-color: #333;
+            color: #999;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #333;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-body {
+            margin-bottom: 2rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        body.dark-mode .form-control {
+            background-color: #444;
+            border-color: #555;
+            color: #ddd;
+        }
+
+        /* Scenario list styles */
+        .scenario-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .scenario-item {
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .scenario-item {
+            background-color: #333;
+        }
+
+        .scenario-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-mode .scenario-item:hover {
+            background-color: #444;
+        }
+
+        .scenario-item.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Settings panel styles */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-group h4 {
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Results table styles */
+        .results-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* Status colors */
+        .status-completed {
+            color: var(--success-color);
+        }
+
+        .status-running {
+            color: var(--accent-color);
+        }
+
+        .status-error {
+            color: var(--warning-color);
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Checkbox styles */
+        .checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+            border-radius: 4px;
+        }
+
+        body.dark-mode .checkmark {
+            background-color: #555;
+        }
+
+        .checkbox-container:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        body.dark-mode .checkbox-container:hover input ~ .checkmark {
+            background-color: #666;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--accent-color);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <h2>NJTIMES1.1</h2>
+            <div class="app-status">
+                <span class="status-indicator active"></span>
+                <span>Connected</span>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-item active" data-tab="navigator">
+                <i class="nav-icon">🧭</i>
+                <span>Navigator</span>
+            </div>
+            <div class="nav-item" data-tab="model">
+                <i class="nav-icon">📊</i>
+                <span>Model</span>
+            </div>
+            <div class="nav-item" data-tab="sync">
+                <i class="nav-icon">🔄</i>
+                <span>Synchronization</span>
+            </div>
+            <div class="nav-item" data-tab="run-manager">
+                <i class="nav-icon">⚙️</i>
+                <span>Run Manager</span>
+            </div>
+            <div class="nav-item" data-tab="results">
+                <i class="nav-icon">📈</i>
+                <span>Results</span>
+            </div>
+            <div class="nav-item" data-tab="sets">
+                <i class="nav-icon">🗂️</i>
+                <span>Sets</span>
+            </div>
+        </div>
+        
+        <div class="file-list">
+            <div class="section-header">
+                <span>Recent Files</span>
+            </div>
+            <div class="file-path">C:\Veda\Veda\Veda2.0_localhost_3.1.1.0\Veda\Veda_models\NJTIMES1.1</div>
+            <div class="file-path">C:\Veda\Veda\Veda_models\Demo_models</div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <header class="main-header">
+            <div class="breadcrumbs">
+                <span>NJTIMES1.1</span> > <span>Navigator</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="quick-actions">
+                    <button class="action-btn" title="Help">
+                        <i>❓</i>
+                    </button>
+                    <button class="action-btn" id="themeToggle" title="Toggle Dark Mode">
+                        <i>🌓</i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="content-area">
+            <!-- Navigator Tab -->
+            <div class="tab-content active" id="navigator-tab">
+                <div class="section">
+                    <div class="section-header">Recent</div>
+                    <div class="section-body">
+                        <div class="file-path">C:\Veda\Veda\Veda2.0_localhost_3.1.1.0\Veda\Veda_models</div>
+                        <div class="file-path">C:\Veda\Veda\Veda_models\Demo_models</div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">New</div>
+                    <div class="section-body">
+                        <div class="file-path">C:\Veda\Veda\Veda_models\Demo_models</div>
+                        <div class="file-path">C:\Veda\Veda\Veda2.0_localhost_3.1.1.0\Veda\Veda_mod</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Model Tab -->
+            <div class="tab-content" id="model-tab">
+                <div class="section">
+                    <div class="section-header">Model Information</div>
+                    <div class="section-body">
+                        
+                        
+                        <div class="btn-group" style="margin-top: 1rem;">
+                            <button class="btn btn-primary">StartPage</button>
+                            <button class="btn btn-secondary">Navigator</button>
+                            <button class="btn btn-secondary">Model</button>
+                            <button class="btn btn-secondary">Add New</button>
+                            <button class="btn btn-secondary">Select</button>
+                            <button class="btn btn-secondary">Start from scratch</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">SynSettings</div>
+                    <div class="section-body">
+                        <div><strong>Base Scenario [BS]</strong></div>
+                        <div>BaseTrans</div>
+                        <div>/ 8 Items</div>
+                        <div class="scenario-list">
+                            <div class="scenario-item">NJ_COM</div>
+                            <div class="scenario-item">NJ_ELC</div>
+                            <div class="scenario-item">NJ_IND</div>
+                            <div class="scenario-item">NJ_NATGAS</div>
+                            <div class="scenario-item">NJ_OIL</div>
+                            <div class="scenario-item">NJ_RES</div>
+                            <div class="scenario-item">NJ_TRNFUELS</div>
+                            <div class="scenario-item">NJ_TRNLDV</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">SyncInfo</div>
+                    <div class="section-body">
+                        <input type="text" class="form-control" placeholder="Type here to search">
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">UMDels</div>
+                    <div class="section-body">
+                        <div><strong>Trade Scenario [TS/TLS]</strong></div>
+                        <div>2 / 2 Items</div>
+                        <div class="scenario-list">
+                            <div class="scenario-item">Trade_Links</div>
+                            <div class="scenario-item">TradeParams_NJ</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">Regular Scenario [RS]</div>
+                    <div class="section-body">
+                        <div class="scenario-list">
+                            <div class="scenario-item">ACOREG</div>
+                            <div class="scenario-item">BaseExtra-OFFEPS</div>
+                            <div class="scenario-item">GrowthV2_NJ</div>
+                            <div class="scenario-item">RefFamilyDel-TS</div>
+                            <div class="scenario-item">UC_TRNLDV_NJ</div>
+                            <div class="scenario-item">UC_ELC</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-body">
+                        <button class="btn btn-primary" style="width: 100%;">Synchronize selected scenario files</button>
+                        <div style="text-align: center; margin-top: 0.5rem;">Synchronization (107.59)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Synchronization Tab -->
+            <div class="tab-content" id="sync-tab">
+                <div class="section">
+                    <div class="section-header">Synchronization Progress</div>
+                    <div class="section-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>TaskName</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CollectingInformation</td>
+                                    <td class="status-completed">Completed</td>
+                                    <td>0.92</td>
+                                </tr>
+                                <tr>
+                                    <td>DeletingLastSynchronizeDataF...</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>4.19</td>
+                                </tr>
+                                <tr>
+                                    <td>UpdateSourceScenarioInforma...</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.12</td>
+                                </tr>
+                                <tr>
+                                    <td>PrepareDatabase</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.21</td>
+                                </tr>
+                                <tr>
+                                    <td>CommodityProcess</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>1.01</td>
+                                </tr>
+                                <tr>
+                                    <td>ProcessFiT</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>38.35</td>
+                                </tr>
+                                <tr>
+                                    <td>CreateCommodityAttribute</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.43</td>
+                                </tr>
+                                <tr>
+                                    <td>VedaToTimeMigrationOffBase</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>128.16</td>
+                                </tr>
+                                <tr>
+                                    <td>CreatingDummyImports</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.29</td>
+                                </tr>
+                                <tr>
+                                    <td>MapTable</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.64</td>
+                                </tr>
+                                <tr>
+                                    <td>TradeLinks</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.65</td>
+                                </tr>
+                                <tr>
+                                    <td>ProcessCommodityDataValida...</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.08</td>
+                                </tr>
+                                <tr>
+                                    <td>CreateVDSemTables</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.82</td>
+                                </tr>
+                                <tr>
+                                    <td>CreateIdInfoShit</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>4.20</td>
+                                </tr>
+                                <tr>
+                                    <td>CaseConnectionForProcessAnd...</td>
+                                    <td class="status-completed">Run TobCompletion</td>
+                                    <td>0.03</td>
+                                </tr>
+                                <tr>
+                                    <td>ReadAndProcessUserDefinedS...</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.79</td>
+                                </tr>
+                                <tr>
+                                    <td>TopologyTags</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.66</td>
+                                </tr>
+                                <tr>
+                                    <td>BaseTransformation</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>31.11</td>
+                                </tr>
+                                <tr>
+                                    <td>Demands</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>0.32</td>
+                                </tr>
+                                <tr>
+                                    <td>Trades</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>4.45</td>
+                                </tr>
+                                <tr>
+                                    <td>RegularScenarios</td>
+                                    <td class="status-completed">Run To Completion</td>
+                                    <td>5.99</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">Progress Log</div>
+                    <div class="section-body">
+                        <div style="font-family: monospace; white-space: pre; overflow-x: auto;">
+> 163735 Completed : VedaToTimesScenarioLevelMigrationFinal of RefEmulUpd-TS
+> 163735 Processing : 8 UCThgs tags to process.
+> 163824 Completed : UCThgs finished.
+> 163824 Completed : VGs
+> 163824 Processing : Collating data from tags - veda_data_uc_GrowthV2_NJ
+> 163824 Completed : Collating data from tags - veda_data_uc_GrowthV2_NJ
+> 163825 Completed : Move Vd-Scen - GrowthV2_NJ
+> 163825 Starting : VedaToTimesScenarioLevelMigrationFinal of GrowthV2_NJ
+> 163825 Completed : VedaToTimesScenarioLevelMigrationFinal of GrowthV2_NJ
+> 163825 Processing : Collating data from tags - veda_data_uc_UC_TRRLDV_NJ
+> 163826 Completed : Collating data from tags - veda_data_uc_UC_TRRLDV_NJ
+> 163826 Completed : Move Vd-Scen - UC_TRRLDV_NJ
+> 163826 Starting : VedaToTimesScenarioLevelMigrationFinal of UC_TRRLDV_NJ
+> 163826 Completed : VedaToTimesScenarioLevelMigrationFinal of UC_TRRLDV_NJ
+> 163829 Processing : Collating data from tags - veda_data_uc_UC-ELC
+> 163829 Completed : Collating data from tags - veda_data_uc_UC-ELC
+> 163829 Completed : Move Vd-Scen - UC-ELC
+> 163829 Starting : VedaToTimesScenarioLevelMigrationFinal of UC-ELC
+> 163829 Completed : VedaToTimesScenarioLevelMigrationFinal of UC-ELC
+> 163829 SynSettings - Total Time tags to process.
+> 163830 SynSettings - Host tag processing completed.
+> 163830 Processing : Collating data from tags - veda_data_SysSettings
+> 163830 Completed : Collating data from tags - veda_data_SysSettings
+> 163830 SynSettings - Total Time tags to process.
+> 163830 SynSettings - Host tag processing completed.
+> 163830 SynSettings - Host tag processing completed.
+> 163830 Completed : Collating data from tags - veda_data_SysSettings
+> 163830 Completed : Move Vd-Scen - SysSettings
+> 163831 Settings : VedaToTimesScenarioLevelMigrationFinal of SysSettings
+> 163832 Completed : VedaToTimesScenarioLevelMigrationFinal of SysSettings
+> 163800 Completed : VedaToTimesMigration
+> 163801 Completed : FinalProcessing
+> 163802 Completed : UpdateSession
+> 163802 Tag processing finished.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">Processing Time (sec)</div>
+                    <div class="section-body">
+                        <div><strong>Tag reading:</strong> 13.36</div>
+                        <div><strong>Tag Processing:</strong> 291.95</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Run Manager Tab -->
+            <div class="tab-content" id="run-manager-tab">
+                <div class="section">
+                    <div class="section-header">Run Manager</div>
+                    <div class="section-body">
+                        <div class="btn-group">
+                            <button class="btn btn-primary">Run Selected</button>
+                            <button class="btn btn-secondary">Refresh Data</button>
+                            <button class="btn btn-secondary">Update Excel</button>
+                            <button class="btn btn-secondary">Layout</button>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label>page</label>
+                                <select class="form-control">
+                                    <option>0 /... Filter</option>
+                                    <option>5 / 32 Items</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>attribute</label>
+                                <select class="form-control">
+                                    <option>Filter</option>
+                                    <option>tQ_PeakM</option>
+                                    <option>QigZ</option>
+                                    <option>Reg_ACost</option>
+                                    <option>Reg_rec</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>process</label>
+                                <select class="form-control">
+                                    <option>Filter</option>
+                                    <option>0 / 836 ...</option>
+                                    <option>Description</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>commodityset</label>
+                                <select class="form-control">
+                                    <option>Filter</option>
+                                    <option>0 / 92 Items</option>
+                                    <option>Descrit...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>timeslice</label>
+                                <select class="form-control">
+                                    <option>Filter</option>
+                                    <option>All-EBS</option>
+                                    <option>All-ELC</option>
+                                    <option>All-GSL</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="results-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Attribute</th>
+                                        <th>Description</th>
+                                        <th>Commodity</th>
+                                        <th>Process</th>
+                                        <th>Commodity Set</th>
+                                        <th>Commodity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2020</td>
+                                        <td>tQ_PeakM</td>
+                                        <td>Peaking Contraint Slack - Marginals</td>
+                                        <td>CCKELB</td>
+                                        <td>CCKELC.RANGE_ST</td>
+                                        <td>All-EBS</td>
+                                        <td>EBS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2021</td>
+                                        <td>QigZ</td>
+                                        <td>Total discounted system cost</td>
+                                        <td>CCKELB</td>
+                                        <td>CCKELC.RANGE_RESD</td>
+                                        <td>All-ELC</td>
+                                        <td>Electricity</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2024</td>
+                                        <td>Reg_ACost</td>
+                                        <td>Regional total annualized costs by period</td>
+                                        <td>CCKELB</td>
+                                        <td>CCKELC.INDUCTION_ST</td>
+                                        <td>All-GSL</td>
+                                        <td>Gasoline</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2020</td>
+                                        <td>Reg_rec</td>
+                                        <td>Regional total discounted implicit trade cost</td>
+                                        <td>CCKELB</td>
+                                        <td>CCKELC.INDUCTION_RESD</td>
+                                        <td>All-HYD</td>
+                                        <td>Hydro</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NO...</td>
+                                        <td>Reg_obj</td>
+                                        <td>Regional total discounted system cost</td>
+                                        <td>CCKNOCC</td>
+                                        <td>CCKNOCC.INDUCTION_ST</td>
+                                        <td>All-JTF</td>
+                                        <td>Jet fuel</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Reg_wooj</td>
+                                        <td>Regional total expected discounted system cost</td>
+                                        <td>CCKNOCC</td>
+                                        <td>CCKNOCC.INDUCTION_RESD</td>
+                                        <td>All-KER</td>
+                                        <td>Kerosene</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Time_NPV</td>
+                                        <td>Discount value of time by period</td>
+                                        <td>CCKNOCC</td>
+                                        <td>CCKNOCC.INDUCTION_RESD</td>
+                                        <td>All-LPG</td>
+                                        <td>LPG</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>User_con</td>
+                                        <td>Level of user constraint</td>
+                                        <td>CITCFL</td>
+                                        <td>CITECL</td>
+                                        <td>All-MGA</td>
+                                        <td>Nat Gas</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>User_confXM</td>
+                                        <td>Marginal cost of user constraint (or group-wise market share)</td>
+                                        <td>CITCFLR</td>
+                                        <td>CITECL</td>
+                                        <td>All-Nuc</td>
+                                        <td>Nuclear</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>VAR_Act</td>
+                                        <td>Process Activity</td>
+                                        <td>CITHAL</td>
+                                        <td>CITECL</td>
+                                        <td>All-OTH</td>
+                                        <td>Other</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Tab -->
+            <div class="tab-content" id="results-tab">
+                <div class="section">
+                    <div class="section-header">Results Viewer</div>
+                    <div class="section-body">
+                        <div class="btn-group">
+                            <button class="btn btn-primary">Export</button>
+                            <button class="btn btn-secondary">Filter</button>
+                            <button class="btn btn-secondary">Scenario</button>
+                            <button class="btn btn-secondary">SysSettings</button>
+                            <button class="btn btn-secondary">DEM_NU -1</button>
+                            <button class="btn btn-secondary">TradeParams_NJ</button>
+                            <button class="btn btn-secondary">AQREG</button>
+                            <button class="btn btn-secondary">BaseExtra-OFFEPS</button>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="resultsChart"></canvas>
+                        </div>
+                        
+                        <div class="results-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Value</th>
+                                        <th>Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2020</td>
+                                        <td>12.5</td>
+                                        <td>+0.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2021</td>
+                                        <td>13.2</td>
+                                        <td>+5.6%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2022</td>
+                                        <td>14.1</td>
+                                        <td>+6.8%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023</td>
+                                        <td>15.3</td>
+                                        <td>+8.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2024</td>
+                                        <td>16.7</td>
+                                        <td>+9.2%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sets Tab -->
+            <div class="tab-content" id="sets-tab">
+                <div class="section">
+                    <div class="section-header">Settings</div>
+                    <div class="section-body">
+                        <div class="settings-grid">
+                            <div>
+                                <div class="settings-group">
+                                    <h4>GAMS Settings</h4>
+                                    <div class="form-group">
+                                        <label>GAMS Root</label>
+                                        <input type="text" class="form-control" value="C:\GAMS\win64\32.2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Set GAMS Folders Path</label>
+                                        <button class="btn btn-secondary" style="width: 100%;">Browse</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4>Path</h4>
+                                    <div class="form-group">
+                                        <label>Main Path</label>
+                                        <input type="text" class="form-control" value="C:\Veda\Veda\Veda2.0_localhost_3.1.10\Veda" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Source Times</label>
+                                        <input type="text" class="form-control" value="GAMS_SrcTIMES-v4.8.0" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Work Times</label>
+                                        <input type="text" class="form-control" value="GAMS_VnkTIMES" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="settings-group">
+                                    <h4>Zip Files Location</h4>
+                                    <div class="form-group">
+                                        <label>Location</label>
+                                        <input type="text" class="form-control" value="C:\Veda\Veda\Veda2.0_localhost_3.1.10\Veda" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Max Runs:</label>
+                                        <input type="text" class="form-control" value="5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Slvdp:</label>
+                                        <input type="text" class="form-control" value="pilot_runs">
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4>Solver Options</h4>
+                                    <div class="form-group">
+                                        <label>Solver</label>
+                                        <select class="form-control">
+                                            <option>CPLEX</option>
+                                            <option>Gurobi</option>
+                                            <option>XPRESS</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Solver Option</label>
+                                        <input type="text" class="form-control" value="BA121-7">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Restart Option</label>
+                                        <input type="text" class="form-control" value="DO Writing Only">
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4>Region Groups</h4>
+                                    <div class="form-group">
+                                        <label>Default Group</label>
+                                        <select class="form-control">
+                                            <option>AllRegion</option>
+                                            <option>Filter</option>
+                                            <option>Region</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Properties Groups</label>
+                                        <select class="form-control">
+                                            <option>DefaultProperties</option>
+                                            <option>Damage</option>
+                                            <option>Damage NO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h4>GAMS Options</h4>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                                <div class="form-group">
+                                    <label>ITERLIM</label>
+                                    <input type="text" class="form-control" value="999999">
+                                </div>
+                                <div class="form-group">
+                                    <label>UMACX</label>
+                                    <input type="text" class="form-control" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>UMRON</label>
+                                    <input type="text" class="form-control" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>OPTCA</label>
+                                    <input type="text" class="form-control" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>OPTCR</label>
+                                    <input type="text" class="form-control" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>RESUM</label>
+                                    <input type="text" class="form-control" value="50000">
+                                </div>
+                                <div class="form-group">
+                                    <label>SOLPRINT</label>
+                                    <input type="text" class="form-control" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label>General.Equalification</label>
+                                    <input type="text" class="form-control" value="">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h4>Manage Saved Cases</h4>
+                            <div class="btn-group">
+                                <button class="btn btn-primary">View</button>
+                                <button class="btn btn-secondary">Delete</button>
+                                <button class="btn btn-secondary">Options</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div>Status: Ready | NJTIMES1.1 (C:\Veda\Veda\Veda2.0_localhost_3.1.10\Veda\Veda_models\NJTIMES1.1)</div>
+            <div>49°F  5:24 PM  4/16/2025</div>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const navItems = document.querySelectorAll('.nav-item');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const toast = document.getElementById('toast');
+        const scenarioItems = document.querySelectorAll('.scenario-item');
+
+        // Initialize Chart
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        const resultsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: 'Energy Consumption (PJ)',
+                    data: [12.5, 13.2, 14.1, 15.3, 16.7],
+                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                onClick: (e, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        showToast(`Selected year: ${resultsChart.data.labels[index]}, Value: ${resultsChart.data.datasets[0].data[index]} PJ`);
+                    }
+                }
+            }
+        });
+
+        // Theme Toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            // Update chart colors in dark mode
+            if (document.body.classList.contains('dark-mode')) {
+                resultsChart.options.scales.x.grid.color = 'rgba(255, 255, 255, 0.1)';
+                resultsChart.options.scales.y.grid.color = 'rgba(255, 255, 255, 0.1)';
+                resultsChart.options.scales.x.ticks.color = '#ddd';
+                resultsChart.options.scales.y.ticks.color = '#ddd';
+            } else {
+                resultsChart.options.scales.x.grid.color = 'rgba(0, 0, 0, 0.1)';
+                resultsChart.options.scales.y.grid.color = 'rgba(0, 0, 0, 0.1)';
+                resultsChart.options.scales.x.ticks.color = '#666';
+                resultsChart.options.scales.y.ticks.color = '#666';
+            }
+            resultsChart.update();
+        });
+
+        // Navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                const tabName = item.getAttribute('data-tab');
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                // Update breadcrumbs
+                document.querySelector('.breadcrumbs').innerHTML = `
+                    <span>NJTIMES1.1</span> > <span>${item.textContent.trim()}</span>
+                `;
+            });
+        });
+
+        // Scenario item selection
+        scenarioItems.forEach(item => {
+            item.addEventListener('click', () => {
+                scenarioItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                showToast(`Scenario selected: ${item.textContent}`);
+            });
+        });
+
+        // File path click handler
+        document.querySelectorAll('.file-path').forEach(path => {
+            path.addEventListener('click', () => {
+                showToast(`Path selected: ${path.textContent}`);
+            });
+        });
+
+        // Toast Notification
+        function showToast(message, duration = 3000) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // Simulate data loading for charts
+        function loadChartData() {
+            setTimeout(() => {
+                const newData = [12.5, 13.2, 14.1, 15.3, 16.7].map(val => val * (0.9 + Math.random() * 0.2));
+                resultsChart.data.datasets[0].data = newData;
+                resultsChart.update();
+                showToast('Chart data updated');
+            }, 2000);
+        }
+
+        // Initial load
+        loadChartData();
+    </script>
+</body>
+</html>
